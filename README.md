@@ -41,6 +41,12 @@ At the core of this project lies the **API key**, which is essential for accessi
 
 ---
 
+## 📸 Output Preview
+
+![image](https://github.com/user-attachments/assets/37fc8fe2-8680-4f00-917d-1d59445da24f)
+
+
 ## 📄 License
 
 This project is for educational and personal portfolio use.
+
