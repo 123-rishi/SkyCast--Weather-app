@@ -41,12 +41,6 @@ At the core of this project lies the **API key**, which is essential for accessi
 
 ---
 
-## 🌐 Live Demo
-
-[Deployed on Vercel](https://your-vercel-url.vercel.app) *(Replace with your actual URL once deployed)*
-
----
-
 ## 📄 License
 
 This project is for educational and personal portfolio use.
