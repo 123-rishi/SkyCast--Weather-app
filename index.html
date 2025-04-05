@@ -1,1 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyCast</title>
+    <style>
+        body {
+            font-family: 'SkyCast', sans-serif;
+            text-align: center;
+            background: url('https://joyenergizer.com/wp-content/uploads/2016/06/weather-and-sky-sublime99-06.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            padding: 20px;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 2.8em;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .weather-forecast {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.4em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+        .weather-forecast img {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+        }
+        .weather-container {
+            max-width: 450px;
+            width: 90%;
+            margin: auto;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(6px);
+            text-align: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .current-location-box {
+            position: absolute;
+            left: calc(50% - 260px);
+            top: calc(50% + 160px);
+            width: 220px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            text-align: left;
+            box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.2);
+            font-size: 1em;
+        }
+        .welcome-message {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.1em;
+            outline: none;
+            text-align: center;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        button {
+            display: block;
+            width: 100%;
+            background: #008CBA;
+            border: none;
+            padding: 12px;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #005f73;
+        }
+        .forecast-info {
+            margin-top: 15px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-forecast">
+        <img src="https://cdn-icons-png.flaticon.com/512/869/869869.png" alt="Sun Icon"> WEATHER FORECAST
+    </div>
+    <h1>SkyCast</h1>
+    <p class="welcome-message">Welcome! Get real-time weather updates at your fingertips.</p>
+    <div class="weather-container">
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+        <h2 id="location"></h2>
+        <p id="temperature"></p>
+        <p id="description"></p>
+        <p class="forecast-info">Stay updated on temperature, wind speed, and more!</p>
+    </div>
+
+    <div class="current-location-box" id="current-location-box">
+        <strong>Current Location:</strong>
+        <p id="current-location">Detecting...</p>
+    </div>
+
+    <script>
+        const apiKey = 'YOUR-API-KEY';
+
+        async function getWeather() {
+            const city = document.getElementById('city').value;
+            if (!city) return;
+
+            try {
+                const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`);
+                const data = await response.json();
+
+                if (data && data.location) {
+                    document.getElementById('location').innerText = `${data.location.name}, ${data.location.country}`;
+                    document.getElementById('temperature').innerText = `Temperature: ${data.current.temp_c}°C`;
+                    document.getElementById('description').innerText = `Condition: ${data.current.condition.text}`;
+                } else {
+                    document.getElementById('location').innerText = 'City not found';
+                    document.getElementById('temperature').innerText = '';
+                    document.getElementById('description').innerText = '';
+                }
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                document.getElementById('location').innerText = 'Network error';
+            }
+        }
+
+        async function detectCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    try {
+                        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}`);
+                        const data = await response.json();
+
+                        if (data && data.location) {
+                            document.getElementById('current-location').innerText = `${data.location.name}, ${data.location.country}`;
+                        } else {
+                            document.getElementById('current-location').innerText = 'Unable to fetch location';
+                        }
+                    } catch (error) {
+                        console.error('Error fetching location:', error);
+                        document.getElementById('current-location').innerText = 'Error fetching location';
+                    }
+                }, () => {
+                    document.getElementById('current-location').innerText = 'Permission denied';
+                });
+            } else {
+                document.getElementById('current-location').innerText = 'Geolocation not supported';
+            }
+        }
+
+        detectCurrentLocation();
+    </script>
+</body>
+</html>
 
